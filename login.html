@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="es">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Login · V0idLink</title>
+<link rel="stylesheet" href="css/styles.css"></head>
+<body>
+  <div class="wrap">
+    <header class="header">
+      <img src="assets/logo.png" alt="">
+      <h1 class="h1">Acceso — V0idLink</h1>
+      <div class="slogan">Entrar en la red</div>
+    </header>
+
+    <section class="section" style="max-width:420px;margin:24px auto">
+      <form id="loginForm">
+        <div class="form-row"><label>Correo / Usuario</label><input id="user" required></div>
+        <div class="form-row"><label>Contraseña</label><input id="pass" type="password" required></div>
+        <button class="button" type="submit">Entrar</button>
+      </form>
+      <p style="margin-top:12px"><small>Demo: el login aquí hace fetch al backend /api/login</small></p>
+    </section>
+
+    <footer>¿No tienes cuenta? Únete al servidor</footer>
+  </div>
+
+  <script>
+    document.getElementById('loginForm').onsubmit = async e=>{
+      e.preventDefault();
+      const user = document.getElementById('user').value;
+      const pass = document.getElementById('pass').value;
+      try{
+        const res = await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({user,pass})});
+        if(!res.ok) throw new Error('Credenciales inválidas');
+        const j = await res.json();
+        // token demo -> guardar en localStorage
+        localStorage.setItem('v0id_token', j.token);
+        alert('Login correcto — token guardado (demo)');
+        window.location.href = 'index.html';
+      }catch(err){ alert('Error: '+err.message) }
+    }
+  </script>
+</body>
+</html>

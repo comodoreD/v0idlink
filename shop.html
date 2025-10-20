@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="es">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tienda · V0idLink</title>
+<link rel="stylesheet" href="css/styles.css"></head>
+<body>
+  <div class="wrap">
+    <header class="header"><img src="assets/logo.png" alt=""><h1 class="h1">Tienda</h1></header>
+
+    <section class="section">
+      <p>Compra roles y perks. (Demo: los productos vienen de /api/products o de localStorage si no hay backend)</p>
+      <div id="products" class="grid"></div>
+    </section>
+
+    <footer>¿Eres admin? <a href="shop-admin.html">Editar tienda</a></footer>
+  </div>
+
+<script>
+async function loadProducts(){
+  let products = [];
+  try{
+    const res = await fetch('/api/products');
+    if(res.ok) products = await res.json();
+    else throw 0;
+  }catch(e){
+    // fallback demo: productos en localStorage o valores por defecto
+    const raw = localStorage.getItem('v0id_products');
+    products = raw ? JSON.parse(raw) : [
+      {id:1,name:'Role: NewNode',price:5,desc:'Rol para nuevos miembros'},
+      {id:2,name:'Pack VIP (7d)',price:10,desc:'Acceso a canales VIP por 7 días'}
+    ];
+  }
+
+  const container = document.getElementById('products'); container.innerHTML='';
+  products.forEach(p=>{
+    const el = document.createElement('div'); el.className='card';
+    el.innerHTML = `<strong>${p.name}</strong><p><small>${p.desc}</small></p><p><b>$${p.price}</b></p>
+      <button class="button" onclick="buy(${p.id})">Comprar</button>`;
+    container.appendChild(el);
+  });
+}
+function buy(id){
+  alert('Función de compra demo. Si tienes backend, hace POST a /api/purchase');
+}
+loadProducts();
+</script>
+</body>
+</html>

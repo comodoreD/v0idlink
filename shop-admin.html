@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Admin Tienda · V0idLink</title><link rel="stylesheet" href="css/styles.css"></head>
+<body>
+  <div class="wrap">
+    <header class="header"><img src="assets/logo.png" alt=""><h1 class="h1">Admin — Tienda</h1></header>
+
+    <section class="section">
+      <h3>Productos</h3>
+      <div id="list" class="grid"></div>
+      <hr style="margin:12px 0">
+      <h4>Agregar producto</h4>
+      <div style="max-width:480px;margin:auto">
+        <div class="form-row"><label>Nombre</label><input id="pname"></div>
+        <div class="form-row"><label>Precio</label><input id="pprice" type="number"></div>
+        <div class="form-row"><label>Descripción</label><input id="pdesc"></div>
+        <button class="button" id="add">Agregar</button>
+      </div>
+    </section>
+
+    <footer>Los cambios se guardan en localStorage (demo). Con backend, llamarías a /api/products (POST/PUT/DELETE).</footer>
+  </div>
+
+<script>
+function render(){
+  const raw = localStorage.getItem('v0id_products');
+  const products = raw?JSON.parse(raw):[];
+  const list = document.getElementById('list'); list.innerHTML='';
+  products.forEach(p=>{
+    const el=document.createElement('div'); el.className='card';
+    el.innerHTML = `<strong>${p.name}</strong><p><small>${p.desc}</small></p><p><b>$${p.price}</b></p>
+      <div style="display:flex;gap:8px;margin-top:8px">
+        <button onclick="remove(${p.id})">Eliminar</button>
+      </div>`;
+    list.appendChild(el);
+  });
+}
+function add(){
+  const name=document.getElementById('pname').value;
+  const price=Number(document.getElementById('pprice').value);
+  const desc=document.getElementById('pdesc').value;
+  if(!name||!price) return alert('Completa nombre y precio');
+  const raw=localStorage.getItem('v0id_products'); const arr=raw?JSON.parse(raw):[];
+  const id = arr.length? Math.max(...arr.map(x=>x.id))+1 : 1;
+  arr.push({id,name,price,desc});
+  localStorage.setItem('v0id_products',JSON.stringify(arr));
+  render(); document.getElementById('pname').value='';
+}
+function remove(id){
+  const raw=localStorage.getItem('v0id_products'); const arr=raw?JSON.parse(raw):[];
+  const next=arr.filter(x=>x.id!==id);
+  localStorage.setItem('v0id_products',JSON.stringify(next));
+  render();
+}
+document.getElementById('add').onclick=add;
+render();
+</script>
+</body></html>
